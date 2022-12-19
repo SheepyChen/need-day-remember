@@ -1,70 +1,81 @@
+import "./index.css";
 import React, { useState } from "react";
-import { Button, TextField } from "@mui/material";
-import { fs } from "../src/utils/firebase";
-import { collection, addDoc } from "firebase/firestore";
-import "./App.css";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Button, Grid, TextField, InputAdornment } from "@mui/material";
+import { blueGrey } from "@mui/material/colors";
+import BasicModal from "./component/Modal";
+import Chart from "./component/Chart";
+import SpendingList from "./component/SpendingList";
+import SearchIcon from "@mui/icons-material/Search";
 
-function App() {
-  const [amout, setAmout] = useState(0);
-  const [name, setName] = useState("");
-  const [date, setDate] = useState("");
-  const [category, setCategory] = useState("食");
-  const handleAmoutChange = (event) => {
-    setAmout(event.target.value);
-  };
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  };
-  const handleDateChange = (event) => {
-    setDate(event.target.value);
-  };
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const documentRef = await addDoc(collection(fs, "Spending"), {
-        amout,
-        name,
-        date,
-      });
-      console.log("sucess");
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
-    setDate("");
-    setName("");
-    setAmout(0);
-  };
+const theme = createTheme({
+  typography: {
+    fontFamily: ["-apple-system", "serif"].join(","),
+  },
+  palette: {
+    primary: {
+      main: "#5f9ea0",
+    },
+    secondary: {
+      main: "#426e70",
+    },
+  },
+});
 
+export default function App() {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   return (
     <div className="App">
-      <header className="App-header">
-        <TextField
-          id="standard-basic"
-          label="Amout"
-          variant="filled"
-          onChange={handleAmoutChange}
-          value={amout}
+      <ThemeProvider theme={theme}>
+        <header>
+          <div className="logo">Need Day Remember</div>
+        </header>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={4} className="leftPart">
+            <div className="searchAdd-area">
+              <TextField
+                id="standard"
+                variant="standard"
+                size="small"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="end">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Button
+                onClick={handleOpen}
+                variant="outlined"
+                size="large"
+                className="btn-add"
+              >
+                Add New
+              </Button>
+            </div>
+            <div className="spendingList">
+              <SpendingList theme={theme} open={open} />
+            </div>
+          </Grid>
+          <Grid item xs={12} md={8} className="rightPart">
+            <Chart />
+          </Grid>
+        </Grid>
+        <BasicModal
+          handleOpen={handleOpen}
+          handleClose={handleClose}
+          open={open}
+          theme={theme}
         />
-        <TextField
-          id="standard"
-          label="Name"
-          variant="filled"
-          onChange={handleNameChange}
-          value={name}
-        />
-        <TextField
-          id="standard-bas"
-          label="Date"
-          variant="filled"
-          onChange={handleDateChange}
-          value={date}
-        />
-        <Button variant="contained" onClick={onSubmit}>
-          Submit
-        </Button>
-      </header>
+        <footer>
+          <div class="container">
+            <p>© 2022 Need Day Remember. All Rights Reserved.</p>
+          </div>
+        </footer>
+      </ThemeProvider>
     </div>
   );
 }
-
-export default App;
