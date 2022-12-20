@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/need-day-remember/static/css/main.05c1aea6.css",
+    "main.js": "/need-day-remember/static/js/main.9d096b33.js",
+    "static/js/787.91881637.chunk.js": "/need-day-remember/static/js/787.91881637.chunk.js",
+    "index.html": "/need-day-remember/index.html",
+    "main.05c1aea6.css.map": "/need-day-remember/static/css/main.05c1aea6.css.map",
+    "main.9d096b33.js.map": "/need-day-remember/static/js/main.9d096b33.js.map",
+    "787.91881637.chunk.js.map": "/need-day-remember/static/js/787.91881637.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.05c1aea6.css",
+    "static/js/main.9d096b33.js"
+  ]
+}
