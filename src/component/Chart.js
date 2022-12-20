@@ -65,45 +65,50 @@ export const dateData = {
     },
   ],
 };
-const SORT_OPTIONS = [
-  { value: "food", name: "食" },
-  { value: "clothes", name: "衣" },
-  { value: "living", name: "住" },
-  { value: "transportation", name: "行" },
-  { value: "learning", name: "育" },
-  { value: "entertainment", name: "樂" },
-  { value: "medicine", name: "醫" },
-  { value: "luxury", name: "奢" },
-];
-const label = SORT_OPTIONS.map((item) => item.name);
 
-export const data = {
-  labels: label,
-  datasets: [
-    {
-      label: "# of Votes",
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        "rgba(255, 99, 132, 0.2)",
-        "rgba(54, 162, 235, 0.2)",
-        "rgba(255, 206, 86, 0.2)",
-        "rgba(75, 192, 192, 0.2)",
-        "rgba(153, 102, 255, 0.2)",
-        "rgba(255, 159, 64, 0.2)",
-      ],
-      borderColor: [
-        "rgba(255, 99, 132, 1)",
-        "rgba(54, 162, 235, 1)",
-        "rgba(255, 206, 86, 1)",
-        "rgba(75, 192, 192, 1)",
-        "rgba(153, 102, 255, 1)",
-        "rgba(255, 159, 64, 1)",
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
-export default function Chart() {
+export default function Chart(props) {
+  const { categorySums } = props;
+  const categorySumsValue = Object.values(categorySums);
+  const SORT_OPTIONS = [
+    { value: "food", name: "食" },
+    { value: "clothes", name: "衣" },
+    { value: "living", name: "住" },
+    { value: "transportation", name: "行" },
+    { value: "learning", name: "育" },
+    { value: "entertainment", name: "樂" },
+    { value: "medicine", name: "醫" },
+    { value: "luxury", name: "奢" },
+  ];
+  const label = Object.keys(categorySums).map(
+    (item) => SORT_OPTIONS.find((i) => i.value === item).name
+  );
+
+  const data = {
+    labels: label,
+    datasets: [
+      {
+        label: "# of Votes",
+        data: categorySumsValue,
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
+        ],
+        borderColor: [
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
   return (
     <Fragment>
       <div className="searchAdd-area">
@@ -130,13 +135,18 @@ export default function Chart() {
           go
         </Button>
       </div>
-      <div className="test"></div>
+
       <Grid container spacing={0}>
         <Grid item xs={12} md={6}>
-          <Pie options={options} data={data} height={300} />
+          <Pie options={options} data={data} height={350} className="center" />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Bar options={options} data={dateData} height={400} />
+        <Grid item xs={12} md={6} sx={{ paddingLeft: "10px" }}>
+          <Bar
+            options={options}
+            data={dateData}
+            height={380}
+            className="center"
+          />
         </Grid>
       </Grid>
     </Fragment>

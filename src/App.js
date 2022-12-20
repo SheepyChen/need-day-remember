@@ -1,12 +1,8 @@
 import "./index.css";
 import React, { useState } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Button, Grid, TextField, InputAdornment } from "@mui/material";
-import { blueGrey } from "@mui/material/colors";
 import BasicModal from "./component/Modal";
-import Chart from "./component/Chart";
 import SpendingList from "./component/SpendingList";
-import SearchIcon from "@mui/icons-material/Search";
 
 const theme = createTheme({
   typography: {
@@ -32,38 +28,7 @@ export default function App() {
         <header>
           <div className="logo">Need Day Remember</div>
         </header>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={4} className="leftPart">
-            <div className="searchAdd-area">
-              <TextField
-                id="standard"
-                variant="standard"
-                size="small"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="end">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Button
-                onClick={handleOpen}
-                variant="outlined"
-                size="large"
-                className="btn-add"
-              >
-                Add New
-              </Button>
-            </div>
-            <div className="spendingList">
-              <SpendingList theme={theme} open={open} />
-            </div>
-          </Grid>
-          <Grid item xs={12} md={8} className="rightPart">
-            <Chart />
-          </Grid>
-        </Grid>
+        <SpendingList theme={theme} open={open} handleOpen={handleOpen} />
         <BasicModal
           handleOpen={handleOpen}
           handleClose={handleClose}

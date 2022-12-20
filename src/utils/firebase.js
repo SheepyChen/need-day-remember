@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB_R_70ZqvScjFKPWpPFTqYUl2EBAMq6g0",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: "need-day-remember.firebaseapp.com",
   projectId: "need-day-remember",
   storageBucket: "need-day-remember.appspot.com",
