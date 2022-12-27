@@ -52,7 +52,6 @@ header {
 .spendingList {
   background-color: rgb(191, 225, 226);
   border: 1px solid rgb(65, 110, 111);
-  min-height: 70vh;
   display: flex;
   align-items: flex-start;
   justify-content: center;

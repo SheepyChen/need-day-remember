@@ -22,18 +22,25 @@ export default function App() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const def = {};
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
         <header>
           <div className="logo">Need Day Remember</div>
         </header>
-        <SpendingList theme={theme} open={open} handleOpen={handleOpen} />
+        <SpendingList
+          theme={theme}
+          open={open}
+          handleOpen={handleOpen}
+          handleClose={handleClose}
+        />
         <BasicModal
           handleOpen={handleOpen}
           handleClose={handleClose}
           open={open}
           theme={theme}
+          defaultValue={def}
         />
         <footer>
           <div class="container">

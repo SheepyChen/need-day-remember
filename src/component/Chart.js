@@ -87,7 +87,7 @@ export default function Chart(props) {
     labels: label,
     datasets: [
       {
-        label: "# of Votes",
+        label: "總花費",
         data: categorySumsValue,
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
@@ -137,10 +137,8 @@ export default function Chart(props) {
       </div>
 
       <Grid container spacing={0}>
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={8}>
           <Pie options={options} data={data} height={350} className="center" />
-        </Grid>
-        <Grid item xs={12} md={6} sx={{ paddingLeft: "10px" }}>
           <Bar
             options={options}
             data={dateData}
@@ -148,6 +146,7 @@ export default function Chart(props) {
             className="center"
           />
         </Grid>
+        <Grid item xs={12} md={4} sx={{ paddingLeft: "10px" }}></Grid>
       </Grid>
     </Fragment>
   );

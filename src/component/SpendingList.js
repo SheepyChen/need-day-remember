@@ -1,46 +1,31 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { fs } from "../utils/firebase";
 import { collection, getDocs } from "firebase/firestore";
-// const totalamount=
-// 算出total 再分比例
-// modal.js
-import {
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Avatar,
-  Button,
-  Grid,
-  TextField,
-  InputAdornment,
-  Divider,
-} from "@mui/material";
-import Chart from "../component/Chart";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import EditIcon from "@mui/icons-material/Edit";
+import { List, Button, Grid, TextField, InputAdornment } from "@mui/material";
+import Chart from "./Chart";
 import SearchIcon from "@mui/icons-material/Search";
+import SpendingItem from "./SpendingItem";
 export default function SpendingList(props) {
-  const { open, handleOpen } = props;
+  const { open, handleOpen, handleClose, theme } = props;
   const [spendingData, setSpendingData] = useState([]);
-  const SORT_OPTIONS = [
-    { value: "food", name: "食" },
-    { value: "clothes", name: "衣" },
-    { value: "living", name: "住" },
-    { value: "transportation", name: "行" },
-    { value: "learning", name: "育" },
-    { value: "entertainment", name: "樂" },
-    { value: "medicine", name: "醫" },
-    { value: "luxury", name: "奢" },
-  ];
+  const [incomeData, setIncomeData] = useState([]);
+
   const fetchPost = async () => {
     await getDocs(collection(fs, "Spending")).then((querySnapshot) => {
-      const newData = querySnapshot.docs.map((doc) => ({
+      const newSpendingData = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       }));
-      setSpendingData(newData);
-      console.log(spendingData, newData);
+      setSpendingData(newSpendingData);
+      // console.log(spendingData, newSpendingData);
+    });
+    await getDocs(collection(fs, "Income")).then((querySnapshot) => {
+      const newIncomeData = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setIncomeData(newIncomeData);
+      // console.log(spendingData, newIncomeData);
     });
   };
 
@@ -64,10 +49,10 @@ export default function SpendingList(props) {
       sums[category] = amount;
     }
   }
-  console.log(sums);
+  // console.log(sums);
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={4} className="leftPart">
+      <Grid item xs={12} md={8} className="leftPart">
         <div className="searchAdd-area">
           <TextField
             id="standard"
@@ -90,41 +75,56 @@ export default function SpendingList(props) {
             Add New
           </Button>
         </div>
-        <div className="spendingList">
-          <List
-            sx={{
-              width: "100%",
-              maxWidth: 500,
-              bgcolor: "background.paper",
-            }}
-          >
-            {spendingData.map((spending) => (
-              <Fragment key={spending.id}>
-                <ListItem>
-                  <ListItemAvatar>
-                    <Avatar>
-                      {
-                        SORT_OPTIONS.find(
-                          (item) => item.value === spending.category
-                        ).name
-                      }
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={spending.name}
-                    secondary={spending.date}
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6} className="spendingListPart">
+            <div className="spendingList">
+              <List
+                sx={{
+                  width: "100%",
+                  maxWidth: 500,
+                  bgcolor: "background.paper",
+                }}
+              >
+                {spendingData.map((spending) => (
+                  <SpendingItem
+                    key={spending.id}
+                    handleOpen={handleOpen}
+                    handleClose={handleClose}
+                    open={open}
+                    theme={theme}
+                    data={spending}
+                    type="spending"
                   />
-                  ${spending.amount}
-                  <EditIcon color="primary" />
-                  <DeleteOutlineIcon color="primary" />
-                </ListItem>
-                <Divider variant="inset" component="li" />
-              </Fragment>
-            ))}
-          </List>
-        </div>
+                ))}
+              </List>
+            </div>
+          </Grid>
+          <Grid item xs={12} md={6} className="incomeListPart">
+            <div className="spendingList">
+              <List
+                sx={{
+                  width: "100%",
+                  maxWidth: 500,
+                  bgcolor: "background.paper",
+                }}
+              >
+                {incomeData.map((spending) => (
+                  <SpendingItem
+                    key={spending.id}
+                    handleOpen={handleOpen}
+                    handleClose={handleClose}
+                    open={open}
+                    theme={theme}
+                    data={spending}
+                    type="income"
+                  />
+                ))}
+              </List>
+            </div>
+          </Grid>
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={8} className="rightPart">
+      <Grid item xs={12} md={4} className="rightPart">
         <Chart categorySums={sums} />
       </Grid>
     </Grid>
