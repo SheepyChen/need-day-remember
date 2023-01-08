@@ -9,7 +9,7 @@ export const SPEND_OPTIONS = [
   { value: "luxury", name: "奢" },
 ];
 export const INCOME_OPTIONS = [
-  { value: "salary", name: "薪水" },
-  { value: "bonus", name: "獎金" },
-  { value: "interests", name: "利息" },
+  { value: "salary", name: "薪" },
+  { value: "bonus", name: "獎" },
+  { value: "interests", name: "利" },
 ];

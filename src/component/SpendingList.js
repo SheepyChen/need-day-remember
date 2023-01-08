@@ -5,10 +5,15 @@ import { List, Button, Grid, TextField, InputAdornment } from "@mui/material";
 import Chart from "./Chart";
 import SearchIcon from "@mui/icons-material/Search";
 import SpendingItem from "./SpendingItem";
+import AddModal from "./AddModal";
+
 export default function SpendingList(props) {
-  const { open, handleOpen, handleClose, theme } = props;
+  const { theme } = props;
   const [spendingData, setSpendingData] = useState([]);
   const [incomeData, setIncomeData] = useState([]);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const fetchPost = async () => {
     await getDocs(collection(fs, "Spending")).then((querySnapshot) => {
@@ -52,6 +57,12 @@ export default function SpendingList(props) {
   // console.log(sums);
   return (
     <Grid container spacing={2}>
+      <AddModal
+        handleClose={handleClose}
+        open={open}
+        theme={theme}
+        title="ADD"
+      />
       <Grid item xs={12} md={8} className="leftPart">
         <div className="searchAdd-area">
           <TextField
@@ -87,6 +98,7 @@ export default function SpendingList(props) {
               >
                 {spendingData.map((spending) => (
                   <SpendingItem
+                    fetchPost={fetchPost}
                     key={spending.id}
                     handleOpen={handleOpen}
                     handleClose={handleClose}
@@ -110,6 +122,7 @@ export default function SpendingList(props) {
               >
                 {incomeData.map((spending) => (
                   <SpendingItem
+                    fetchPost={fetchPost}
                     key={spending.id}
                     handleOpen={handleOpen}
                     handleClose={handleClose}

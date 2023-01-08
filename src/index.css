@@ -22,12 +22,12 @@ code {
   text-align: center;
   margin: 0 60px;
 }
-header {
+/* header {
   height: 16vh;
   width: 100%;
   background-color: rgb(95, 158, 160);
   margin-bottom: 10px;
-}
+} */
 .logo {
   position: absolute;
   left: 64px;
