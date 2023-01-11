@@ -15,7 +15,7 @@ import { isEmpty, get } from "lodash";
 import PropTypes from "prop-types";
 import SendIcon from "@mui/icons-material/Send";
 import { fs } from "../utils/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { SPEND_OPTIONS, INCOME_OPTIONS } from "../utils/const";
 
 const modalStyle = {
@@ -31,7 +31,7 @@ const modalStyle = {
 };
 
 export default function AddModal(props) {
-  const { handleClose, open, theme, title, defaultValue } = props;
+  const { handleClose, open, theme, title, defaultValue, userData } = props;
   const defaultAmount = get(defaultValue, "amount", "");
   const defaultCate = get(defaultValue, "category", "");
   const defaultDate = get(defaultValue, "date", "");
@@ -42,6 +42,7 @@ export default function AddModal(props) {
   const [category, setCategory] = useState("please select");
   const [selectedValue, setSelectedValue] = useState("Spending");
   const [errorMessage, setErrorMessage] = useState("");
+
   const handleDateChange = (event) => {
     setDate(event.target.value);
   };
@@ -61,9 +62,9 @@ export default function AddModal(props) {
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
+
   const onSubmit = async (e) => {
     e.preventDefault();
-
     try {
       selectedValue === "Spending"
         ? await addDoc(collection(fs, "Spending"), {
@@ -71,19 +72,21 @@ export default function AddModal(props) {
             name,
             date,
             category,
+            userId: userData.uid,
           })
         : await addDoc(collection(fs, "Income"), {
             amount,
             name,
             date,
             category,
+            userId: userData.uid,
           });
     } catch (e) {
       console.error("Error adding document: ", e);
     }
     setDate("");
     setName("");
-    setAmount(0);
+    setAmount("");
     setCategory("please select");
     handleClose();
   };

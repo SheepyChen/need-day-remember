@@ -6,9 +6,10 @@ import Chart from "./Chart";
 import SearchIcon from "@mui/icons-material/Search";
 import SpendingItem from "./SpendingItem";
 import AddModal from "./AddModal";
+import { isEmpty } from "lodash";
 
 export default function SpendingList(props) {
-  const { theme } = props;
+  const { theme, userData } = props;
   const [spendingData, setSpendingData] = useState([]);
   const [incomeData, setIncomeData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -21,15 +22,20 @@ export default function SpendingList(props) {
         ...doc.data(),
         id: doc.id,
       }));
-      setSpendingData(newSpendingData);
-      // console.log(spendingData, newSpendingData);
+
+      setSpendingData(
+        newSpendingData.filter((item) => item.userId === userData.uid)
+      );
+      // console.log(newSpendingData, userData.uid);
     });
     await getDocs(collection(fs, "Income")).then((querySnapshot) => {
       const newIncomeData = querySnapshot.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
       }));
-      setIncomeData(newIncomeData);
+      setIncomeData(
+        newIncomeData.filter((item) => item.userId === userData.uid)
+      );
       // console.log(spendingData, newIncomeData);
     });
   };
@@ -42,19 +48,49 @@ export default function SpendingList(props) {
     return {
       ...item,
       amount: parseInt(item.amount),
+      yearMonth: !isEmpty(item) ? item.date.slice(0, 6) : "",
     };
   });
-  const sums = {};
+
+  const incomeList = incomeData.map((item) => {
+    return {
+      ...item,
+      amount: parseInt(item.amount),
+      yearMonth: !isEmpty(item) ? item.date.slice(0, 6) : "",
+    };
+  });
+
+  const amountListSum = {};
   for (let i = 0; i < amountList.length; i++) {
     const obj = amountList[i];
     const { category, amount } = obj;
-    if (category in sums) {
-      sums[category] += amount;
+    if (category in amountListSum) {
+      amountListSum[category] += amount;
     } else {
-      sums[category] = amount;
+      amountListSum[category] = amount;
     }
   }
-  // console.log(sums);
+  const spendingTotalPerMonth = {};
+  for (let i = 0; i < amountList.length; i++) {
+    const obj = amountList[i];
+    const { yearMonth, amount } = obj;
+    if (yearMonth in spendingTotalPerMonth) {
+      spendingTotalPerMonth[yearMonth] += amount;
+    } else {
+      spendingTotalPerMonth[yearMonth] = amount;
+    }
+  }
+  const incomeTotalPerMonth = {};
+  for (let i = 0; i < incomeList.length; i++) {
+    const obj = incomeList[i];
+    const { yearMonth, amount } = obj;
+    if (yearMonth in incomeTotalPerMonth) {
+      incomeTotalPerMonth[yearMonth] += amount;
+    } else {
+      incomeTotalPerMonth[yearMonth] = amount;
+    }
+  }
+
   return (
     <Grid container spacing={2}>
       <AddModal
@@ -62,6 +98,7 @@ export default function SpendingList(props) {
         open={open}
         theme={theme}
         title="ADD"
+        userData={userData}
       />
       <Grid item xs={12} md={8} className="leftPart">
         <div className="searchAdd-area">
@@ -88,57 +125,69 @@ export default function SpendingList(props) {
         </div>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6} className="spendingListPart">
-            <div className="spendingList">
-              <List
-                sx={{
-                  width: "100%",
-                  maxWidth: 500,
-                  bgcolor: "background.paper",
-                }}
-              >
-                {spendingData.map((spending) => (
-                  <SpendingItem
-                    fetchPost={fetchPost}
-                    key={spending.id}
-                    handleOpen={handleOpen}
-                    handleClose={handleClose}
-                    open={open}
-                    theme={theme}
-                    data={spending}
-                    type="spending"
-                  />
-                ))}
-              </List>
-            </div>
+            {isEmpty(spendingData) ? (
+              <div>sorry you dont have any spending data...</div>
+            ) : (
+              <div className="spendingList">
+                <List
+                  sx={{
+                    width: "100%",
+                    maxWidth: 500,
+                    bgcolor: "background.paper",
+                  }}
+                >
+                  {spendingData.map((spending) => (
+                    <SpendingItem
+                      fetchPost={fetchPost}
+                      key={spending.id}
+                      handleOpen={handleOpen}
+                      handleClose={handleClose}
+                      open={open}
+                      theme={theme}
+                      data={spending}
+                      type="spending"
+                    />
+                  ))}
+                </List>
+              </div>
+            )}
           </Grid>
           <Grid item xs={12} md={6} className="incomeListPart">
-            <div className="spendingList">
-              <List
-                sx={{
-                  width: "100%",
-                  maxWidth: 500,
-                  bgcolor: "background.paper",
-                }}
-              >
-                {incomeData.map((spending) => (
-                  <SpendingItem
-                    fetchPost={fetchPost}
-                    key={spending.id}
-                    handleOpen={handleOpen}
-                    handleClose={handleClose}
-                    open={open}
-                    theme={theme}
-                    data={spending}
-                    type="income"
-                  />
-                ))}
-              </List>
-            </div>
+            {isEmpty(incomeData) ? (
+              <div>sorry you dont have any income data...</div>
+            ) : (
+              <div className="spendingList">
+                <List
+                  sx={{
+                    width: "100%",
+                    maxWidth: 500,
+                    bgcolor: "background.paper",
+                  }}
+                >
+                  {incomeData.map((spending) => (
+                    <SpendingItem
+                      fetchPost={fetchPost}
+                      key={spending.id}
+                      handleOpen={handleOpen}
+                      handleClose={handleClose}
+                      open={open}
+                      theme={theme}
+                      data={spending}
+                      type="income"
+                    />
+                  ))}
+                </List>
+              </div>
+            )}
           </Grid>
         </Grid>
       </Grid>
       <Grid item xs={12} md={4} className="rightPart">
-        <Chart categorySums={sums} />
+        <Chart
+          categorySums={amountListSum}
+          spendingTotalPerMonth={spendingTotalPerMonth}
+          incomeTotalPerMonth={incomeTotalPerMonth}
+        />
       </Grid>
     </Grid>
   );

@@ -10,11 +10,10 @@ import { collection, addDoc } from "firebase/firestore";
 import { Modal, Box, TextField, Button } from "@mui/material";
 
 export default function LoginModal(props) {
-  const { open, handleClose, setIsLogin } = props;
+  const { open, handleClose, setUserData } = props;
   const [account, setAccount] = useState("");
   const [pwd, setPwd] = useState("");
   const [choice, setChoice] = useState("login");
-  const [userData, setUserData] = useState({});
 
   const modalStyle = {
     position: "absolute",
@@ -49,14 +48,13 @@ export default function LoginModal(props) {
     }
     if (choice === "login") {
       const res = await signInWithEmailAndPassword(auth, email, password);
-      setIsLogin(true);
-      setUserData(res[0]);
+      setUserData(res.user);
     }
     setAccount("");
     setPwd("");
     handleClose();
   };
-  console.log(userData);
+
   const sendPasswordReset = async (email) => {
     try {
       await sendPasswordResetEmail(auth, email);
@@ -112,6 +110,13 @@ export default function LoginModal(props) {
         >
           還沒有註冊過？請按此註冊
         </a>
+        {/* <a
+          onClick={() => {
+            sendPasswordReset();
+          }}
+        >
+          忘記密碼？請點此重設
+        </a> */}
       </Box>
     </Modal>
   );

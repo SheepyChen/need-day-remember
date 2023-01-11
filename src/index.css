@@ -51,7 +51,7 @@ code {
 }
 .spendingList {
   background-color: rgb(191, 225, 226);
-  border: 1px solid rgb(65, 110, 111);
+  border: 1px solid #802d2d;
   display: flex;
   align-items: flex-start;
   justify-content: center;

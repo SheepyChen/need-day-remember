@@ -11,6 +11,7 @@ import {
 import { Pie, Bar } from "react-chartjs-2";
 import { Grid, TextField, Button } from "@mui/material";
 import { Fragment } from "react";
+import { get } from "lodash";
 
 ChartJS.register(
   ArcElement,
@@ -50,24 +51,10 @@ const labels = [
   "12月",
 ];
 
-export const dateData = {
-  labels,
-  datasets: [
-    {
-      label: "收入",
-      data: [400, 300, 240, 333, 220, 240, 250, 400, 300, 240, 333, 232],
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
-    },
-    {
-      label: "支出",
-      data: [401, 333, 243, 333, 223, 240, 253, 240, 333, 220, 240, 250],
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
-    },
-  ],
-};
-
 export default function Chart(props) {
-  const { categorySums } = props;
+  const categorySums = get(props, "categorySums", {});
+  const spendingTotalPerMonth = get(props, "spendingTotalPerMonth", {});
+  const incomeTotalPerMonth = get(props, "incomeTotalPerMonth", {});
   const categorySumsValue = Object.values(categorySums);
   const SORT_OPTIONS = [
     { value: "food", name: "食" },
@@ -82,6 +69,37 @@ export default function Chart(props) {
   const label = Object.keys(categorySums).map(
     (item) => SORT_OPTIONS.find((i) => i.value === item).name
   );
+
+  const monthSpendingDataArr = [];
+  for (let i = 1; i < 12; i++) {
+    i < 10
+      ? monthSpendingDataArr.push(get(spendingTotalPerMonth, `20220${i}`, 0))
+      : monthSpendingDataArr.push(get(spendingTotalPerMonth, `2022${i}`, 0));
+  }
+
+  const monthIncomeDataArr = [];
+  for (let i = 1; i < 12; i++) {
+    i < 10
+      ? monthIncomeDataArr.push(get(incomeTotalPerMonth, `20220${i}`, 0))
+      : monthIncomeDataArr.push(get(incomeTotalPerMonth, `2022${i}`, 0));
+  }
+
+  // console.log(monthIncomeDataArr, monthSpendingDataArr);
+  const dateData = {
+    labels,
+    datasets: [
+      {
+        label: "收入",
+        data: monthIncomeDataArr,
+        backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+      {
+        label: "支出",
+        data: monthSpendingDataArr,
+        backgroundColor: "rgba(53, 162, 235, 0.5)",
+      },
+    ],
+  };
 
   const data = {
     labels: label,

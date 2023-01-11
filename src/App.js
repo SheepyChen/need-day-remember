@@ -6,6 +6,7 @@ import LoginModal from "./component/LoginModal";
 import SpendingList from "./component/SpendingList";
 import { signOut } from "firebase/auth";
 import { fs, auth } from "../src/utils/firebase";
+import { isEmpty } from "lodash";
 
 const theme = createTheme({
   typography: {
@@ -13,23 +14,24 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: "#5f9ea0",
+      main: "#c89ea0",
     },
     secondary: {
-      main: "#426e70",
+      main: "#ab4f4f",
     },
   },
 });
 
 export default function App() {
   const [open, setOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [userData, setUserData] = useState({});
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const handleLogout = () => {
     signOut(auth);
-    setIsLogin(false);
+    setUserData({});
   };
+  // console.log(userData);
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
@@ -42,23 +44,32 @@ export default function App() {
             }}
           >
             <div className="logo">Need Day Remember</div>
-            <Button size="small" onClick={handleOpen}>
+            {/* <Button size="small" onClick={handleOpen}>
               {" "}
               Diary{" "}
-            </Button>
-            <Button size="small" onClick={isLogin ? handleLogout : handleOpen}>
-              {" "}
-              {isLogin ? "LOGOUT" : "LOGIN"}{" "}
-            </Button>
+            </Button> */}
           </Box>
         </header>
-
+        <Button
+          size="large"
+          onClick={!isEmpty(userData) ? handleLogout : handleOpen}
+          sx={{
+            bgcolor: "rgb(200, 158, 160)",
+            color: "rgb(0, 0, 0)",
+            marginTop: "30px",
+          }}
+        >
+          {" "}
+          {!isEmpty(userData) ? "LOGOUT" : "LOGIN"}{" "}
+        </Button>
         <LoginModal
           open={open}
           handleClose={handleClose}
-          setIsLogin={setIsLogin}
+          setUserData={setUserData}
         />
-        {isLogin && <SpendingList theme={theme} />}
+        {!isEmpty(userData) && (
+          <SpendingList theme={theme} userData={userData} />
+        )}
         <footer>
           <div class="container">
             <p>© 2022 Need Day Remember. All Rights Reserved.</p>
