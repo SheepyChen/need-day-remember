@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, Fragment } from "react";
 import { get } from "lodash";
 import {
   List,
@@ -20,15 +20,18 @@ import SearchIcon from "@mui/icons-material/Search";
 import { fs } from "../utils/firebase";
 import { collection, deleteDoc, doc } from "firebase/firestore";
 import { SPEND_OPTIONS, INCOME_OPTIONS } from "../utils/const";
-import BasicModal from "./AddModal";
+import AddModal from "./AddModal";
 export default function SpendingItem(props) {
   const { data, theme, type, fetchPost } = props;
   const [open, setOpen] = useState(false);
   const handleEditOpen = () => setOpen(true);
-  const handleEditClose = () => setOpen(false);
+  const handleEditClose = () => {
+    setOpen(false);
+    fetchPost();
+  };
   const handleDelete = async (id) => {
     try {
-      type === "spending"
+      type === "Spending"
         ? await deleteDoc(doc(fs, "Spending", id))
         : await deleteDoc(doc(fs, "Income", id));
     } catch (e) {
@@ -46,7 +49,7 @@ export default function SpendingItem(props) {
               color: "rgb(71,71, 71)",
             }}
           >
-            {type === "spending"
+            {type === "Spending"
               ? get(
                   SPEND_OPTIONS.find((item) => item.value === data.category),
                   "name",
@@ -64,12 +67,13 @@ export default function SpendingItem(props) {
           <EditIcon />
         </IconButton>
         {open && (
-          <BasicModal
-            handleOpen={handleEditOpen}
+          <AddModal
             handleClose={handleEditClose}
             open={open}
             theme={theme}
             defaultValue={data}
+            title="Edit"
+            type={type}
           />
         )}
         <IconButton color="primary">

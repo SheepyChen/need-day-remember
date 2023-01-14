@@ -5,15 +5,16 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   signOut,
+  sendEmailVerification,
 } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { Modal, Box, TextField, Button } from "@mui/material";
 
 export default function LoginModal(props) {
-  const { open, handleClose, setUserData } = props;
+  const { open, handleClose, setUserData, setCookie } = props;
   const [account, setAccount] = useState("");
   const [pwd, setPwd] = useState("");
-  const [choice, setChoice] = useState("login");
+  const [choice, setChoice] = useState(true); //true:login false:register
 
   const modalStyle = {
     position: "absolute",
@@ -28,10 +29,10 @@ export default function LoginModal(props) {
   };
 
   useEffect(() => {
-    setChoice("login");
+    setChoice(true);
   }, [open]);
   const onSubmit = async (email, password) => {
-    if (choice === "register") {
+    if (choice === false) {
       try {
         const res = await createUserWithEmailAndPassword(auth, email, password);
         const user = res.user;
@@ -41,29 +42,40 @@ export default function LoginModal(props) {
           authProvider: "local",
           email,
         });
+
+        sendEmailVerification(auth.currentUser).then(() => {
+          alert("Please check your email and then login again, Thx.");
+        });
       } catch (err) {
         console.error(err);
         alert(err.message);
       }
     }
-    if (choice === "login") {
-      const res = await signInWithEmailAndPassword(auth, email, password);
-      setUserData(res.user);
+    if (choice === true) {
+      try {
+        const res = await signInWithEmailAndPassword(auth, email, password);
+
+        setUserData(res.user);
+        setCookie("loginToken", res.user.uid);
+      } catch (err) {
+        console.error(err);
+        alert(err.message);
+      }
     }
     setAccount("");
     setPwd("");
     handleClose();
   };
 
-  const sendPasswordReset = async (email) => {
-    try {
-      await sendPasswordResetEmail(auth, email);
-      alert("Password reset link sent!");
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
-    }
-  };
+  // const sendPasswordReset = async (email) => {
+  //   try {
+  //     await sendPasswordResetEmail(auth, email);
+  //     alert("Password reset link sent!");
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert(err.message);
+  //   }
+  // };
 
   return (
     <Modal
@@ -73,7 +85,7 @@ export default function LoginModal(props) {
       aria-describedby="modal-modal-description"
     >
       <Box sx={modalStyle}>
-        <h3>{choice === "login" ? "登入" : "註冊"}</h3>
+        <h3>{choice === true ? "登入" : "註冊"}</h3>
         <TextField
           className="input"
           fullWidth
@@ -91,9 +103,9 @@ export default function LoginModal(props) {
           variant="standard"
           onChange={(e) => setPwd(e.target.value)}
           value={pwd}
+          type="password"
         />
         <Button
-          className="selectSend"
           variant="outlined"
           size="large"
           onClick={(e) => {
@@ -103,13 +115,13 @@ export default function LoginModal(props) {
         >
           SEND
         </Button>
-        <a
+        <Button
           onClick={() => {
-            setChoice("register");
+            setChoice(!choice);
           }}
         >
-          還沒有註冊過？請按此註冊
-        </a>
+          {choice === false ? "點此登入" : "還沒有註冊過？請按此註冊"}
+        </Button>
         {/* <a
           onClick={() => {
             sendPasswordReset();

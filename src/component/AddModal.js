@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Tabs,
@@ -15,8 +15,11 @@ import { isEmpty, get } from "lodash";
 import PropTypes from "prop-types";
 import SendIcon from "@mui/icons-material/Send";
 import { fs } from "../utils/firebase";
-import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc } from "firebase/firestore";
 import { SPEND_OPTIONS, INCOME_OPTIONS } from "../utils/const";
+import Calendar from "react-calendar";
+
+import "react-calendar/dist/Calendar.css";
 
 const modalStyle = {
   position: "absolute",
@@ -31,39 +34,68 @@ const modalStyle = {
 };
 
 export default function AddModal(props) {
-  const { handleClose, open, theme, title, defaultValue, userData } = props;
-  const defaultAmount = get(defaultValue, "amount", "");
-  const defaultCate = get(defaultValue, "category", "");
-  const defaultDate = get(defaultValue, "date", "");
-  const defaultName = get(defaultValue, "name", "");
-  const [name, setName] = useState("");
-  const [amount, setAmount] = useState("");
-  const [date, setDate] = useState("");
-  const [category, setCategory] = useState("please select");
-  const [selectedValue, setSelectedValue] = useState("Spending");
+  const { handleClose, open, theme, title, defaultValue, userId } = props;
+  const type = get(props, "type", "Spending");
+  const id = get(defaultValue, "id", "");
+  const [category, setCategory] = useState(get(defaultValue, "category", ""));
+  const [selectedValue, setSelectedValue] = useState(type);
   const [errorMessage, setErrorMessage] = useState("");
+  const [name, setName] = useState(get(defaultValue, "name", ""));
+  const [amount, setAmount] = useState(get(defaultValue, "amount", ""));
+  const [date, setDate] = useState(get(defaultValue, "date", ""));
+  let year = !isEmpty(defaultValue) ? defaultValue.date.slice(0, 4) : "";
+  let month = !isEmpty(defaultValue) ? defaultValue.date.slice(4, 6) : "";
+  let day = !isEmpty(defaultValue) ? defaultValue.date.slice(6, 8) : "";
+  const [value, onChange] = useState(
+    isEmpty(defaultValue) ? new Date() : new Date(year, month - 1, day)
+  );
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
-  const handleDateChange = (event) => {
-    setDate(event.target.value);
+  const handleDateOpen = () => {
+    setCalendarOpen(true);
   };
+
+  useEffect(() => {
+    const formatDate = `${value.getFullYear()}${
+      value.getMonth() + 1 < 10
+        ? `0${value.getMonth() + 1}`
+        : value.getMonth() + 1
+    }${value.getDate() < 10 ? `0${value.getDate()}` : value.getDate()}`;
+    setDate(formatDate);
+    setCalendarOpen(false);
+  }, [value]);
+
   const handleAmountChange = (event) => {
+    setErrorMessage("");
     const regExp = /^[0-9]+$/;
     if (!isEmpty(event.target.value) && regExp.test(event.target.value)) {
       setAmount(event.target.value);
     }
   };
   const handleNameChange = (event) => {
+    setErrorMessage("");
     setName(event.target.value);
   };
   const handleCategoryChange = (event) => {
+    setErrorMessage("");
     setCategory(event.target.value);
   };
 
-  const handleChange = (event) => {
+  const handleRadioChange = (event) => {
+    setErrorMessage("");
     setSelectedValue(event.target.value);
   };
 
   const onSubmit = async (e) => {
+    if (
+      isEmpty(amount) ||
+      isEmpty(name) ||
+      isEmpty(date) ||
+      isEmpty(category)
+    ) {
+      setErrorMessage("請輸入完整內容");
+      return;
+    }
     e.preventDefault();
     try {
       selectedValue === "Spending"
@@ -72,14 +104,14 @@ export default function AddModal(props) {
             name,
             date,
             category,
-            userId: userData.uid,
+            userId,
           })
         : await addDoc(collection(fs, "Income"), {
             amount,
             name,
             date,
             category,
-            userId: userData.uid,
+            userId,
           });
     } catch (e) {
       console.error("Error adding document: ", e);
@@ -87,12 +119,19 @@ export default function AddModal(props) {
     setDate("");
     setName("");
     setAmount("");
-    setCategory("please select");
+    setCategory("");
     handleClose();
   };
-  // const handleEdit = async (todo, Subject) => {
-  //   await updateDoc(doc(db, "todos", todo.id), { Subject: Subject });
-  // };
+  const handleEdit = async () => {
+    await updateDoc(doc(fs, type, id), {
+      amount: amount.toString(),
+      name,
+      date,
+      category,
+      userId: get(defaultValue, "userId", ""),
+    });
+    handleClose();
+  };
   // const toggleComplete = async (todo) => {
   //   await updateDoc(doc(db, "todos", todo.id), { completed: !todo.completed });
   // };
@@ -105,28 +144,25 @@ export default function AddModal(props) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={modalStyle}>
-          <Box sx={{ width: "100%", typography: "body1" }}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}></Box>
-          </Box>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             {title}
           </Typography>
           <Radio
             checked={selectedValue === "Spending"}
-            onChange={handleChange}
+            onChange={handleRadioChange}
             value="Spending"
             name="radio-buttons"
           />
           Spending
           <Radio
             checked={selectedValue === "Income"}
-            onChange={handleChange}
+            onChange={handleRadioChange}
             value="Income"
             name="radio-buttons"
           />
           Income
           <TextField
-            className="input"
+            sx={{ display: "inline-block", marginBottom: "10px" }}
             fullWidth
             id="standard"
             label="Name"
@@ -134,70 +170,74 @@ export default function AddModal(props) {
             onChange={handleNameChange}
             value={name}
             color={theme.primary}
-            defaultValue={defaultName}
           />
           <TextField
-            className="input"
+            sx={{ display: "inline-block", marginBottom: "10px" }}
             fullWidth
             id="standard-basic"
             label="Amount"
             variant="standard"
             onChange={handleAmountChange}
             value={amount}
-            defaultValue={defaultAmount}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">$</InputAdornment>
               ),
             }}
           />
-          <div>{errorMessage}</div>
           <TextField
-            className="input"
+            sx={{ display: "inline-block", marginBottom: "10px" }}
             fullWidth
             id="standard-bas"
             label="Date"
             variant="standard"
-            onChange={handleDateChange}
+            onClick={handleDateOpen}
             value={date}
-            defaultValue={defaultDate}
           />
-          <div className="selectSend">
-            <Select
-              className="selectSend"
-              value={category}
-              defaultValue={defaultCate}
-              variant="standard"
-              sx={{ width: 120 }}
-              onChange={handleCategoryChange}
-              displayEmpty
-              inputProps={{ "aria-label": "Without label" }}
-            >
-              {selectedValue === "Spending"
-                ? SPEND_OPTIONS.map((item) => (
-                    <MenuItem value={item.value} key={item.value}>
-                      {item.name}
-                    </MenuItem>
-                  ))
-                : INCOME_OPTIONS.map((item) => (
-                    <MenuItem value={item.value} key={item.value}>
-                      {item.name}
-                    </MenuItem>
-                  ))}
-            </Select>
+          {calendarOpen && (
+            <Calendar onChange={onChange} value={value} className="calendar" />
+          )}
+          <Select
+            value={category}
+            variant="standard"
+            sx={{ width: 120, zIndex: "100" }}
+            onChange={handleCategoryChange}
+            displayEmpty
+            inputProps={{ "aria-label": "Without label" }}
+          >
+            {selectedValue === "Spending"
+              ? SPEND_OPTIONS.map((item) => (
+                  <MenuItem value={item.value} key={item.value}>
+                    {item.name}
+                  </MenuItem>
+                ))
+              : INCOME_OPTIONS.map((item) => (
+                  <MenuItem value={item.value} key={item.value}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+          </Select>
+          <Typography
+            id="modal-modal-description"
+            sx={{ mt: 2, color: "#c89ea0", fontSize: "8px" }}
+          >
+            ---
+            {isEmpty(errorMessage) ? "開源節流" : errorMessage}
+            ---
+          </Typography>
+          <div>
             <Button
-              className="selectSend"
               variant="outlined"
               size="large"
-              onClick={onSubmit}
+              onClick={title === "ADD" ? onSubmit : handleEdit}
               endIcon={<SendIcon />}
+              sx={{
+                zIndex: "100",
+              }}
             >
               SEND
             </Button>
           </div>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            ---開源節流---
-          </Typography>
         </Box>
       </Modal>
     </div>

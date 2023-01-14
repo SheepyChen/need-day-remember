@@ -7,6 +7,7 @@ import SpendingList from "./component/SpendingList";
 import { signOut } from "firebase/auth";
 import { fs, auth } from "../src/utils/firebase";
 import { isEmpty } from "lodash";
+import { useCookies } from "react-cookie";
 
 const theme = createTheme({
   typography: {
@@ -23,6 +24,7 @@ const theme = createTheme({
 });
 
 export default function App() {
+  const [cookies, setCookie, removeCookie] = useCookies();
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState({});
   const handleOpen = () => setOpen(true);
@@ -30,8 +32,9 @@ export default function App() {
   const handleLogout = () => {
     signOut(auth);
     setUserData({});
+    removeCookie("loginToken", { path: "/" });
   };
-  // console.log(userData);
+
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
@@ -43,32 +46,52 @@ export default function App() {
               height: "17vh",
             }}
           >
-            <div className="logo">Need Day Remember</div>
+            <Box
+              sx={{
+                bgcolor: "rgb(255, 255, 255)",
+                color: "rgb(32, 55, 56)",
+                position: "absolute",
+                top: "4px",
+                left: "64px",
+                width: "100px",
+                height: "100px",
+                fontSize: "18px",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              Need Day Remember
+            </Box>
             {/* <Button size="small" onClick={handleOpen}>
               {" "}
               Diary{" "}
             </Button> */}
+            <Button
+              size="large"
+              onClick={!isEmpty(cookies.loginToken) ? handleLogout : handleOpen}
+              sx={{
+                bgcolor: "rgb(200, 158, 160)",
+                color: "#0f0f0f",
+                marginTop: "30px",
+                position: "absolute",
+                top: "0%",
+                right: "16%",
+              }}
+            >
+              {" "}
+              {!isEmpty(cookies.loginToken) ? "LOGOUT" : "LOGIN"}{" "}
+            </Button>
           </Box>
         </header>
-        <Button
-          size="large"
-          onClick={!isEmpty(userData) ? handleLogout : handleOpen}
-          sx={{
-            bgcolor: "rgb(200, 158, 160)",
-            color: "rgb(0, 0, 0)",
-            marginTop: "30px",
-          }}
-        >
-          {" "}
-          {!isEmpty(userData) ? "LOGOUT" : "LOGIN"}{" "}
-        </Button>
+
         <LoginModal
           open={open}
           handleClose={handleClose}
           setUserData={setUserData}
+          setCookie={setCookie}
         />
-        {!isEmpty(userData) && (
-          <SpendingList theme={theme} userData={userData} />
+        {!isEmpty(cookies.loginToken) && (
+          <SpendingList theme={theme} cookies={cookies} />
         )}
         <footer>
           <div class="container">

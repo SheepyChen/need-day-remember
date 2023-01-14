@@ -12,6 +12,7 @@ import { Pie, Bar } from "react-chartjs-2";
 import { Grid, TextField, Button } from "@mui/material";
 import { Fragment } from "react";
 import { get } from "lodash";
+import { Box } from "@mui/system";
 
 ChartJS.register(
   ArcElement,
@@ -23,7 +24,7 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
+export const categoryOptions = {
   responsive: false,
   plugins: {
     legend: {
@@ -31,7 +32,20 @@ export const options = {
     },
     title: {
       display: true,
-      text: "收支/類別統計表",
+      text: "本月各類別支出統計表",
+    },
+  },
+};
+
+export const yearOptions = {
+  responsive: false,
+  plugins: {
+    legend: {
+      position: "top",
+    },
+    title: {
+      display: true,
+      text: "今年收支統計表",
     },
   },
 };
@@ -52,6 +66,8 @@ const labels = [
 ];
 
 export default function Chart(props) {
+  const { defaultYearMonth } = props;
+  const defaultYear = defaultYearMonth.slice(0, 4);
   const categorySums = get(props, "categorySums", {});
   const spendingTotalPerMonth = get(props, "spendingTotalPerMonth", {});
   const incomeTotalPerMonth = get(props, "incomeTotalPerMonth", {});
@@ -73,15 +89,23 @@ export default function Chart(props) {
   const monthSpendingDataArr = [];
   for (let i = 1; i < 12; i++) {
     i < 10
-      ? monthSpendingDataArr.push(get(spendingTotalPerMonth, `20220${i}`, 0))
-      : monthSpendingDataArr.push(get(spendingTotalPerMonth, `2022${i}`, 0));
+      ? monthSpendingDataArr.push(
+          get(spendingTotalPerMonth, `${defaultYear}0${i}`, 0)
+        )
+      : monthSpendingDataArr.push(
+          get(spendingTotalPerMonth, `${defaultYear}${i}`, 0)
+        );
   }
 
   const monthIncomeDataArr = [];
   for (let i = 1; i < 12; i++) {
     i < 10
-      ? monthIncomeDataArr.push(get(incomeTotalPerMonth, `20220${i}`, 0))
-      : monthIncomeDataArr.push(get(incomeTotalPerMonth, `2022${i}`, 0));
+      ? monthIncomeDataArr.push(
+          get(incomeTotalPerMonth, `${defaultYear}0${i}`, 0)
+        )
+      : monthIncomeDataArr.push(
+          get(incomeTotalPerMonth, `${defaultYear}${i}`, 0)
+        );
   }
 
   // console.log(monthIncomeDataArr, monthSpendingDataArr);
@@ -101,7 +125,7 @@ export default function Chart(props) {
     ],
   };
 
-  const data = {
+  const categoryData = {
     labels: label,
     datasets: [
       {
@@ -129,7 +153,7 @@ export default function Chart(props) {
   };
   return (
     <Fragment>
-      <div className="searchAdd-area">
+      {/* <div className="searchAdd-area">
         <TextField
           id="standard"
           label="From:"
@@ -145,25 +169,25 @@ export default function Chart(props) {
           size="medium"
         />
         <Button
-          className="btn-send"
+         
           size="large"
           variant="outlined"
           // onClick={onSubmit}
         >
           go
         </Button>
-      </div>
+      </div> */}
 
-      <Grid container spacing={0}>
+      <Grid container spacing={0} sx={{ marginLeft: "40px" }}>
         <Grid item xs={12} md={8}>
-          <Pie options={options} data={data} height={350} className="center" />
-          <Bar
-            options={options}
-            data={dateData}
-            height={380}
-            className="center"
-          />
+          <Box sx={{ marginBottom: "30px" }}>
+            <Pie options={categoryOptions} data={categoryData} height={350} />
+          </Box>
+          <Box sx={{ marginBottom: "30px" }}>
+            <Bar options={yearOptions} data={dateData} height={380} />
+          </Box>
         </Grid>
+
         <Grid item xs={12} md={4} sx={{ paddingLeft: "10px" }}></Grid>
       </Grid>
     </Fragment>
