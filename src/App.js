@@ -90,8 +90,17 @@ export default function App() {
           setUserData={setUserData}
           setCookie={setCookie}
         />
-        {!isEmpty(cookies.loginToken) && (
+        {!isEmpty(cookies.loginToken) ? (
           <SpendingList theme={theme} cookies={cookies} />
+        ) : (
+          <Box
+            sx={{
+              color: "#0f0f0f",
+              height: "20px",
+            }}
+          >
+            ...
+          </Box>
         )}
         <footer>
           <div class="container">

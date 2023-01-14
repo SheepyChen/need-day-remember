@@ -178,17 +178,29 @@ export default function Chart(props) {
         </Button>
       </div> */}
 
-      <Grid container spacing={0} sx={{ marginLeft: "40px" }}>
-        <Grid item xs={12} md={8}>
-          <Box sx={{ marginBottom: "30px" }}>
+      <Grid container spacing={0}>
+        <Grid item xs={12} md={12}>
+          <Box
+            sx={{
+              marginBottom: "30px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Pie options={categoryOptions} data={categoryData} height={350} />
           </Box>
-          <Box sx={{ marginBottom: "30px" }}>
-            <Bar options={yearOptions} data={dateData} height={380} />
+          <Box
+            sx={{
+              marginBottom: "30px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Bar options={yearOptions} data={dateData} height={350} />
           </Box>
         </Grid>
-
-        <Grid item xs={12} md={4} sx={{ paddingLeft: "10px" }}></Grid>
       </Grid>
     </Fragment>
   );
