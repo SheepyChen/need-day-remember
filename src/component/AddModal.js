@@ -26,7 +26,7 @@ const modalStyle = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: "60%",
+  width: { xs: "100%", sm: "60%", lg: "40%" },
   bgcolor: "background.paper",
   border: "1px solid #767676",
   boxShadow: 24,
@@ -147,13 +147,15 @@ export default function AddModal(props) {
           <Typography id="modal-modal-title" variant="h6" component="h2">
             {title}
           </Typography>
-          <Radio
-            checked={selectedValue === "Spending"}
-            onChange={handleRadioChange}
-            value="Spending"
-            name="radio-buttons"
-          />
-          Spending
+          <div>
+            <Radio
+              checked={selectedValue === "Spending"}
+              onChange={handleRadioChange}
+              value="Spending"
+              name="radio-buttons"
+            />
+            Spending
+          </div>
           <Radio
             checked={selectedValue === "Income"}
             onChange={handleRadioChange}
@@ -197,6 +199,9 @@ export default function AddModal(props) {
           {calendarOpen && (
             <Calendar onChange={onChange} value={value} className="calendar" />
           )}
+          <Typography id="description" sx={{ fontSize: "8px" }}>
+            Category
+          </Typography>
           <Select
             value={category}
             variant="standard"

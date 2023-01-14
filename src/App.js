@@ -7,7 +7,7 @@ import SpendingList from "./component/SpendingList";
 import { signOut } from "firebase/auth";
 import { fs, auth } from "../src/utils/firebase";
 import { isEmpty } from "lodash";
-import { useCookies } from "react-cookie";
+import { useCookies, withCookies } from "react-cookie";
 
 const theme = createTheme({
   typography: {
@@ -23,7 +23,7 @@ const theme = createTheme({
   },
 });
 
-export default function App() {
+function App() {
   const [cookies, setCookie, removeCookie] = useCookies();
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState({});
@@ -32,7 +32,10 @@ export default function App() {
   const handleLogout = () => {
     signOut(auth);
     setUserData({});
-    removeCookie("loginToken", { path: "/" });
+    removeCookie("loginToken", {
+      path: "/",
+      domain: "sheepychen.github.io",
+    });
   };
 
   return (
@@ -111,3 +114,5 @@ export default function App() {
     </div>
   );
 }
+
+export default withCookies(App);
