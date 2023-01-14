@@ -1,4 +1,4 @@
-### Need Day Rememmber 你得記得--記帳 APP
+### Need Day Remember 你得記得--記帳 APP
 
 Demo 頁面：https://sheepychen.github.io/need-day-remember/
 登入測試用的帳號或是用email註冊一個新的帳號
