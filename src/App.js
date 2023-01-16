@@ -43,7 +43,12 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <Box
+      sx={{
+        textAlign: "center",
+        marginX: { xs: "0px", sm: "40px", lg: "60px" },
+      }}
+    >
       <ThemeProvider theme={theme}>
         <header>
           <Box
@@ -111,11 +116,11 @@ function App() {
         )}
         <footer>
           <div class="container">
-            <p>© 2022 Need Day Remember. All Rights Reserved.</p>
+            <p>© 2023 Need Day Remember. All Rights Reserved.</p>
           </div>
         </footer>
       </ThemeProvider>
-    </div>
+    </Box>
   );
 }
 

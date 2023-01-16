@@ -159,7 +159,7 @@ export default function SpendingList(props) {
           handleClose={handleClose}
           open={open}
           theme={theme}
-          title="ADD"
+          title="Add"
           userId={cookies.loginToken}
         />
 

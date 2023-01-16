@@ -234,13 +234,12 @@ export default function AddModal(props) {
             <Button
               variant="outlined"
               size="large"
-              onClick={title === "ADD" ? onSubmit : handleEdit}
-              endIcon={<SendIcon />}
+              onClick={title === "Add" ? onSubmit : handleEdit}
               sx={{
                 zIndex: "100",
               }}
             >
-              SEND
+              {title === "Add" ? "SEND" : "SAVE"}
             </Button>
           </div>
         </Box>

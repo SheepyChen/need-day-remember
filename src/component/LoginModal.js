@@ -113,7 +113,7 @@ export default function LoginModal(props) {
             onSubmit(account, pwd);
           }}
         >
-          SEND
+          {choice === true ? "Login" : "Register"}
         </Button>
         <Button
           onClick={() => {
