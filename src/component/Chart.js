@@ -199,14 +199,8 @@ export default function Chart(props) {
             sx={{ mt: 2, fontSize: "20px", fontWeight: "700" }}
           >
             月收入 - 月支出 = $
-            {monthIncomeDataArr.reduce(
-              (accumulator, currentValue) => accumulator + currentValue,
-              0
-            ) -
-              monthSpendingDataArr.reduce(
-                (accumulator, currentValue) => accumulator + currentValue,
-                0
-              )}
+            {get(incomeTotalPerMonth, defaultYearMonth, 0) -
+              get(spendingTotalPerMonth, defaultYearMonth, 0)}
           </Typography>
           <Box
             sx={{
@@ -218,6 +212,20 @@ export default function Chart(props) {
           >
             <Bar options={yearOptions} data={dateData} height={350} />
           </Box>
+          <Typography
+            id="modal-modal-description"
+            sx={{ mt: 2, fontSize: "20px", fontWeight: "700" }}
+          >
+            Year Total = $
+            {monthIncomeDataArr.reduce(
+              (accumulator, currentValue) => accumulator + currentValue,
+              0
+            ) -
+              monthSpendingDataArr.reduce(
+                (accumulator, currentValue) => accumulator + currentValue,
+                0
+              )}
+          </Typography>
         </Grid>
       </Grid>
     </Fragment>
