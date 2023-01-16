@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/need-day-remember/static/css/main.f172bd91.css",
-    "main.js": "/need-day-remember/static/js/main.5980ebad.js",
+    "main.css": "/need-day-remember/static/css/main.4e1cc401.css",
+    "main.js": "/need-day-remember/static/js/main.72f0bf2c.js",
     "static/js/787.91881637.chunk.js": "/need-day-remember/static/js/787.91881637.chunk.js",
     "index.html": "/need-day-remember/index.html",
-    "main.f172bd91.css.map": "/need-day-remember/static/css/main.f172bd91.css.map",
-    "main.5980ebad.js.map": "/need-day-remember/static/js/main.5980ebad.js.map",
+    "main.4e1cc401.css.map": "/need-day-remember/static/css/main.4e1cc401.css.map",
+    "main.72f0bf2c.js.map": "/need-day-remember/static/js/main.72f0bf2c.js.map",
     "787.91881637.chunk.js.map": "/need-day-remember/static/js/787.91881637.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f172bd91.css",
-    "static/js/main.5980ebad.js"
+    "static/css/main.4e1cc401.css",
+    "static/js/main.72f0bf2c.js"
   ]
 }
