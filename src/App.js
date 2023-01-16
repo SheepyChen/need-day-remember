@@ -32,10 +32,14 @@ function App() {
   const handleLogout = () => {
     signOut(auth);
     setUserData({});
-    removeCookie("loginToken", {
-      path: "/",
-      domain: "sheepychen.github.io",
-    });
+    removeCookie(
+      "loginToken"
+      //本機使用
+      //  {
+      //   path: "/",
+      //   domain: "localhost",
+      // }
+    );
   };
 
   return (

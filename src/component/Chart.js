@@ -9,7 +9,7 @@ import {
   Title,
 } from "chart.js";
 import { Pie, Bar } from "react-chartjs-2";
-import { Grid, TextField, Button } from "@mui/material";
+import { Grid, TextField, Button, Typography } from "@mui/material";
 import { Fragment } from "react";
 import { get } from "lodash";
 import { Box } from "@mui/system";
@@ -108,7 +108,6 @@ export default function Chart(props) {
         );
   }
 
-  // console.log(monthIncomeDataArr, monthSpendingDataArr);
   const dateData = {
     labels,
     datasets: [
@@ -133,19 +132,24 @@ export default function Chart(props) {
         data: categorySumsValue,
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
-          "rgba(54, 162, 235, 0.2)",
           "rgba(255, 206, 86, 0.2)",
           "rgba(75, 192, 192, 0.2)",
+          "rgba(221, 240, 185, 0.4)",
           "rgba(153, 102, 255, 0.2)",
           "rgba(255, 159, 64, 0.2)",
+          "rgba(185, 186, 184, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
         ],
         borderColor: [
           "rgba(255, 99, 132, 1)",
-          "rgba(54, 162, 235, 1)",
+
           "rgba(255, 206, 86, 1)",
           "rgba(75, 192, 192, 1)",
+          "rgba(221, 240, 185, 1)",
           "rgba(153, 102, 255, 1)",
           "rgba(255, 159, 64, 1)",
+          "rgba(185, 186, 184, 1)",
+          "rgba(54, 162, 235, 1)",
         ],
         borderWidth: 1,
       },
@@ -190,6 +194,20 @@ export default function Chart(props) {
           >
             <Pie options={categoryOptions} data={categoryData} height={350} />
           </Box>
+          <Typography
+            id="modal-modal-description"
+            sx={{ mt: 2, fontSize: "20px", fontWeight: "700" }}
+          >
+            月收入 - 月支出 = $
+            {monthIncomeDataArr.reduce(
+              (accumulator, currentValue) => accumulator + currentValue,
+              0
+            ) -
+              monthSpendingDataArr.reduce(
+                (accumulator, currentValue) => accumulator + currentValue,
+                0
+              )}
+          </Typography>
           <Box
             sx={{
               marginBottom: "30px",

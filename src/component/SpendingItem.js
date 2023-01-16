@@ -39,13 +39,37 @@ export default function SpendingItem(props) {
     }
     fetchPost();
   };
+  const colorGenerate = (cate) => {
+    let color = "#cee0d3";
+    switch (cate) {
+      case "entertainment":
+        return (color = "rgba(54, 162, 235, 0.2)");
+      case "clothes":
+        return (color = "rgba(221, 240, 185, 0.4)");
+      case "living":
+        return (color = "rgba(153, 102, 255, 0.2)");
+      case "transportation":
+        return (color = "rgba(255, 99, 132, 0.2)");
+      case "learning":
+        return (color = "rgba(75, 192, 192, 0.2)");
+      case "food":
+        return (color = "rgba(255, 159, 64, 0.2)");
+      case "luxury":
+        return (color = "rgba(185, 186, 184, 0.2)");
+      case "medicine":
+        return (color = "rgba(255, 206, 86, 0.2)");
+      default:
+        return (color = "#f0f5f2");
+    }
+  };
+
   return (
     <Fragment>
       <ListItem>
         <ListItemAvatar>
           <Avatar
             sx={{
-              bgcolor: "rgb(224, 195, 197)",
+              bgcolor: colorGenerate(data.category),
               color: "rgb(71,71, 71)",
             }}
           >

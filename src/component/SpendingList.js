@@ -14,7 +14,7 @@ import Chart from "./Chart";
 import SearchIcon from "@mui/icons-material/Search";
 import SpendingItem from "./SpendingItem";
 import AddModal from "./AddModal";
-import { isEmpty } from "lodash";
+import { isEmpty, sortBy } from "lodash";
 import moment from "moment";
 import IconButton from "@mui/material/IconButton";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -24,12 +24,19 @@ export default function SpendingList(props) {
   const { theme, cookies } = props;
   const [spendingData, setSpendingData] = useState([]);
   const [incomeData, setIncomeData] = useState([]);
+  const [searchData, setSearchData] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
   const [defaultYearMonth, setDefaultYearMonth] = useState(
     moment().format("YYYYMM")
   );
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+    handleSearch(event.target.value);
+  };
 
   const fetchPost = async () => {
     await getDocs(collection(fs, "Spending")).then((querySnapshot) => {
@@ -121,6 +128,11 @@ export default function SpendingList(props) {
     }
   }
 
+  const handleSearch = (input) => {
+    setSearchData(
+      defautYearMonthAmountList.filter((item) => item.name.includes(input))
+    );
+  };
   return (
     <Fragment>
       <Typography
@@ -159,18 +171,6 @@ export default function SpendingList(props) {
               marginTop: "20px",
             }}
           >
-            {/* <TextField
-            id="standard"
-            variant="standard"
-            size="small"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          /> */}
             <Button
               onClick={handleOpen}
               variant="outlined"
@@ -179,6 +179,41 @@ export default function SpendingList(props) {
             >
               Add New
             </Button>
+            <Box
+              sx={{
+                marginTop: "30px",
+              }}
+            >
+              <TextField
+                id="standard"
+                variant="standard"
+                size="small"
+                value={searchInput}
+                onChange={handleSearchInputChange}
+              />
+              <IconButton color="primary">
+                <SearchIcon />
+              </IconButton>
+              <Box
+                sx={{
+                  bgcolor: "#eddddd",
+                }}
+              >
+                {!isEmpty(searchInput) &&
+                  searchData.map((spending) => (
+                    <SpendingItem
+                      fetchPost={fetchPost}
+                      key={spending.id}
+                      handleOpen={handleOpen}
+                      handleClose={handleClose}
+                      open={open}
+                      theme={theme}
+                      data={spending}
+                      type="Spending"
+                    />
+                  ))}
+              </Box>
+            </Box>
           </Box>
 
           <Grid container spacing={2}>
@@ -207,18 +242,20 @@ export default function SpendingList(props) {
                       bgcolor: "background.paper",
                     }}
                   >
-                    {defautYearMonthAmountList.map((spending) => (
-                      <SpendingItem
-                        fetchPost={fetchPost}
-                        key={spending.id}
-                        handleOpen={handleOpen}
-                        handleClose={handleClose}
-                        open={open}
-                        theme={theme}
-                        data={spending}
-                        type="Spending"
-                      />
-                    ))}
+                    {sortBy(defautYearMonthAmountList, (o) => o.date).map(
+                      (spending) => (
+                        <SpendingItem
+                          fetchPost={fetchPost}
+                          key={spending.id}
+                          handleOpen={handleOpen}
+                          handleClose={handleClose}
+                          open={open}
+                          theme={theme}
+                          data={spending}
+                          type="Spending"
+                        />
+                      )
+                    )}
                   </List>
                 </Box>
               )}
@@ -248,18 +285,20 @@ export default function SpendingList(props) {
                       bgcolor: "background.paper",
                     }}
                   >
-                    {defautYearMonthIncomeList.map((income) => (
-                      <SpendingItem
-                        fetchPost={fetchPost}
-                        key={income.id}
-                        handleOpen={handleOpen}
-                        handleClose={handleClose}
-                        open={open}
-                        theme={theme}
-                        data={income}
-                        type="Income"
-                      />
-                    ))}
+                    {sortBy(defautYearMonthIncomeList, (o) => o.date).map(
+                      (income) => (
+                        <SpendingItem
+                          fetchPost={fetchPost}
+                          key={income.id}
+                          handleOpen={handleOpen}
+                          handleClose={handleClose}
+                          open={open}
+                          theme={theme}
+                          data={income}
+                          type="Income"
+                        />
+                      )
+                    )}
                   </List>
                 </Box>
               )}
