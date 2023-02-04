@@ -58,6 +58,8 @@ export default function SpendingItem(props) {
         return (color = "rgba(185, 186, 184, 0.2)");
       case "medicine":
         return (color = "rgba(255, 206, 86, 0.2)");
+      case "other":
+        return (color = "rgba(200, 206, 80, 0.4)");
       default:
         return (color = "#f0f5f2");
     }
@@ -71,6 +73,7 @@ export default function SpendingItem(props) {
             sx={{
               bgcolor: colorGenerate(data.category),
               color: "rgb(71,71, 71)",
+              fontSize: "16px",
             }}
           >
             {type === "Spending"

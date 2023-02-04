@@ -13,6 +13,7 @@ import { Grid, TextField, Button, Typography } from "@mui/material";
 import { Fragment } from "react";
 import { get } from "lodash";
 import { Box } from "@mui/system";
+import { SPEND_OPTIONS } from "../utils/const";
 
 ChartJS.register(
   ArcElement,
@@ -72,18 +73,9 @@ export default function Chart(props) {
   const spendingTotalPerMonth = get(props, "spendingTotalPerMonth", {});
   const incomeTotalPerMonth = get(props, "incomeTotalPerMonth", {});
   const categorySumsValue = Object.values(categorySums);
-  const SORT_OPTIONS = [
-    { value: "food", name: "食" },
-    { value: "clothes", name: "衣" },
-    { value: "living", name: "住" },
-    { value: "transportation", name: "行" },
-    { value: "learning", name: "育" },
-    { value: "entertainment", name: "樂" },
-    { value: "medicine", name: "醫" },
-    { value: "luxury", name: "奢" },
-  ];
+
   const label = Object.keys(categorySums).map(
-    (item) => SORT_OPTIONS.find((i) => i.value === item).name
+    (item) => SPEND_OPTIONS.find((i) => i.value === item).name
   );
 
   const monthSpendingDataArr = [];
@@ -142,7 +134,6 @@ export default function Chart(props) {
         ],
         borderColor: [
           "rgba(255, 99, 132, 1)",
-
           "rgba(255, 206, 86, 1)",
           "rgba(75, 192, 192, 1)",
           "rgba(221, 240, 185, 1)",
