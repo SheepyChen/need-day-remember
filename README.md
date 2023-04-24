@@ -1,4 +1,4 @@
-### Need Day Remember 你得記得--記帳 APP
+### Need Day Remember 你得記得--記帳網頁
 
 Demo 頁面：https://sheepychen.github.io/need-day-remember/
 登入測試用的帳號或是用email註冊一個新的帳號
@@ -36,6 +36,7 @@ Demo 頁面：https://sheepychen.github.io/need-day-remember/
 - 忘記密碼重設
 - 錯誤顯示優化(不使用彈出視窗)
 - 類別的底色與pie底色統一
+- bug:搜尋出現的item直接按刪除未清除
 
 未來預計加入的功能：
 - 用戶自訂網頁theme功能
